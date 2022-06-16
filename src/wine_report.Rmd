@@ -1,0 +1,98 @@
+---
+title: "EDA for Wine Quality Dataset"
+author: "Ammar Alfaifi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+# knitr::knit(function(input, ...) {
+#     rmarkdown::render(
+#       input,
+#       output_dir = "../"
+#     )
+#   })
+```
+
+# Introduction
+
+This a report about the wine quality dataset downloaded form kaggle api.
+In this report we will examine this dataset and explore it to find out its significant
+as well as the research questions that might answer. This approach is commonly called 
+Exploratory Data Analysis (in short, EDA).
+
+# Data
+As described form the kaggle sourse in [source](https://www.kaggle.com/datasets/uciml/red-wine-quality-cortez-et-al-2009), 
+this datasets is related to red variants of the Portuguese "Vinho Verde" wine.
+
+## Describing the headers
+
+| fixed acidity        | most acids involved with wine or fixed or nonvolatile (do not evaporate readily)                                              |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| volatile acidity     | the amount of acetic acid in wine, which at too high of levels can lead to an unpleasant, vinegar taste                       |
+| citric acid          | found in small quantities, citric acid can add 'freshness' and flavor to wines                                                |
+| residual sugar       | the amount of sugar remaining after fermentation stops, it's rare to find wines with less than 1 gram/liter and               |
+| chlorides            | the amount of salt in the wine                                                                                                |
+| free sulfur dioxide  | the free form of SO2 exists in equilibrium between molecular SO2 (as a dissolved gas) and bisulfite ion; it prevents          |
+| total sulfur dioxide | amount of free and bound forms of S02; in low concentrations, SO2 is mostly undetectable in wine, but at free SO2             |
+| density              | the density of water is close to that of water depending on the percent alcohol and sugar content                             |
+| pH                   | describes how acidic or basic a wine is on a scale from 0 (very acidic) to 14 (very basic); most wines are between 3-4 on the |
+| sulphates            | a wine additive which can contribute to sulfur dioxide gas (S02) levels,                                                      |
+
+# EDA
+
+```{r, include=FALSE}
+library(tidyverse)
+library(Hmisc)
+library(funModeling) 
+library(DataExplorer)
+library(janitor)
+library(here)
+library(DT)
+```
+
+Loading and cleaning the header names
+```{R}
+read_csv(here("../data/winequality-red.csv")) %>%
+    clean_names() -> wine_data
+glimpse(wine_data)
+```
+
+```{r, }
+status(wine_data)
+```
+
+This shows a summury about the dataset, includin standard deviation, mean, and ration on `NA`
+values out of total observations.
+
+```{r, }
+plot_num(wine_data)
+```
+
+The above graphs show the count of observations for each catogerical along with their values.
+We can note that for `chlorides` thre is string positve skweness. This might indicat 
+unnormal value. Further for `total_sulfur_dioxide`, it has relatively large sdandard deviation.
+This can be due to imprecise measuring. Let us investigate more about the later.
+
+```{r}
+profiling_num(wine_data$total_sulfur_dioxide)
+```
+
+The variation_coef is about 0.7, wich indicate hight uncertinity about whether the 
+total_sulfur_dioxide has that effect on the wine quality. It us inresting question to 
+analize more about this connection.
+
+## Show Some Catogericals
+
+```{r}
+wine_data %>%
+    select(chlorides, alcohol, quality) -> selected_table
+datatable(selected_table)
+```
+
+# Conclusion
+
+to sum up, this dataset has many catogericals that are intresting to analize and study.Furthermore, it 
+can leads to a good understanding of how different compoents can increase the wine quality.
+More analysis hypothsis testing is needed to determine best practice for wine manufacturers
+to produce high wine quality with balance.
