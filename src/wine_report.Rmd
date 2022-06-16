@@ -53,7 +53,7 @@ library(DT)
 
 Loading and cleaning the header names
 ```{R}
-read_csv(here("../data/winequality-red.csv")) %>%
+read_csv(here("data/winequality-red.csv")) %>%
     clean_names() -> wine_data
 glimpse(wine_data)
 ```
